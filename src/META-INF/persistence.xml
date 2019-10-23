@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<persistence version="2.1" xmlns="http://xmlns.jcp.org/xml/ns/persistence">
+  <persistence-unit name="CollPU" transaction-type="RESOURCE_LOCAL">
+    <provider>org.eclipse.persistence.jpa.PersistenceProvider</provider>
+    <class>pack.db.entity.Category</class>
+    <class>pack.db.entity.Skills</class>
+    <properties>
+      <property name="eclipselink.jdbc.url" value="jdbc:postgresql://localhost:5432/science_collector"/>
+      <property name="eclipselink.jdbc.driver" value="org.postgresql.Driver"/>
+      <property name="eclipselink.jdbc.user" value="postgres"/>
+      <property name="eclipselink.jdbc.password" value="15sl02tt"/>
+    </properties>
+  </persistence-unit>
+</persistence>

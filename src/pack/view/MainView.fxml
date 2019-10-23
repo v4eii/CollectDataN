@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.BorderPane?>
+<BorderPane fx:id="bPane" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="pack.view.controllers.MainViewController">
+   <top>
+      <MenuBar BorderPane.alignment="CENTER">
+        <menus>
+          <Menu mnemonicParsing="false" text="Данные">
+            <items>
+              <MenuItem fx:id="mDataCollection" mnemonicParsing="false" text="Сбор данных" />
+              <MenuItem fx:id="mDataAnalysis" mnemonicParsing="false" text="Анализ данных" visible="false" />
+                  <MenuItem fx:id="mOption" mnemonicParsing="false" text="Параметры..." />
+            </items>
+          </Menu>
+            <Menu mnemonicParsing="false" text="Категории">
+              <items>
+                <MenuItem fx:id="mCompetence" mnemonicParsing="false" text="Добавить компетенцию" />
+              </items>
+            </Menu>
+          <Menu mnemonicParsing="false" text="Помощь">
+            <items>
+              <MenuItem fx:id="mAbout" mnemonicParsing="false" text="О программе" />
+            </items>
+          </Menu>
+        </menus>
+      </MenuBar>
+   </top>
+</BorderPane>

@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<AnchorPane fx:id="aPane" prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/11.0.1"
+            xmlns:fx="http://javafx.com/fxml/1" fx:controller="pack.view.controllers.CollectViewController">
+   <TextArea fx:id="textInfo" editable="false" layoutX="14.0" layoutY="14.0" prefHeight="348.0" prefWidth="572.0"
+             AnchorPane.bottomAnchor="38.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0"
+             AnchorPane.topAnchor="0.0"/>
+   <ToolBar layoutX="457.0" layoutY="373.0" nodeOrientation="RIGHT_TO_LEFT" prefHeight="3.0" prefWidth="25.0"
+            AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0">
+      <opaqueInsets>
+         <Insets/>
+      </opaqueInsets>
+      <Button fx:id="btnStartParsing" mnemonicParsing="false" prefHeight="27.0" prefWidth="96.0" text="Начать сбор"/>
+      <CheckBox fx:id="chLogGenerate" mnemonicParsing="false" text="Сгенерировать лог"/>
+      <Label fx:id="labelLogInfo" contentDisplay="CENTER" text="🛈" textFill="#6c7c6d"/>
+   </ToolBar>
+</AnchorPane>

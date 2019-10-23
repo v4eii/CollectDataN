@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="338.0"
+            prefWidth="434.0" xmlns="http://javafx.com/javafx/11.0.1"
+            xmlns:fx="http://javafx.com/fxml/1" fx:controller="pack.view.controllers.OptionViewController">
+    <Label layoutX="14.0" layoutY="14.0" text="Сбор данных" AnchorPane.leftAnchor="14.0" AnchorPane.topAnchor="14.0"/>
+    <Separator layoutX="14.0" layoutY="31.0" prefWidth="200.0" AnchorPane.leftAnchor="14.0"
+               AnchorPane.rightAnchor="14.0" AnchorPane.topAnchor="31.0"/>
+    <Button fx:id="btnCancel" layoutX="239.0" layoutY="211.0" mnemonicParsing="false" text="Отмена"
+            AnchorPane.bottomAnchor="14.0" AnchorPane.rightAnchor="14.0"/>
+    <Button fx:id="btnAccept" layoutX="150.0" layoutY="211.0" mnemonicParsing="false" text="Сохранить"
+            AnchorPane.bottomAnchor="14.0" AnchorPane.rightAnchor="80.0"/>
+    <GridPane layoutX="14.0" layoutY="35.0" prefHeight="146.0" prefWidth="384.0" AnchorPane.leftAnchor="14.0"
+              AnchorPane.rightAnchor="14.0" AnchorPane.topAnchor="35.0">
+        <columnConstraints>
+            <ColumnConstraints hgrow="SOMETIMES" maxWidth="253.0" minWidth="10.0" prefWidth="252.0"/>
+            <ColumnConstraints halignment="LEFT" hgrow="SOMETIMES" maxWidth="190.0" minWidth="10.0" prefWidth="154.0"/>
+        </columnConstraints>
+        <rowConstraints>
+            <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES"/>
+            <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES"/>
+            <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES"/>
+            <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES"/>
+            <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES"/>
+        </rowConstraints>
+        <Label text="Количество обрабатывающих потоков"/>
+        <Spinner fx:id="spinThreadCount" prefHeight="25.0" prefWidth="94.0" GridPane.columnIndex="1">
+            <GridPane.margin>
+                <Insets left="6.0"/>
+            </GridPane.margin>
+        </Spinner>
+        <Label text="Обрабатываемые сайты" GridPane.rowIndex="1"/>
+        <MenuButton mnemonicParsing="false" prefHeight="25.0" prefWidth="142.0" text="Выберите сайты"
+                    GridPane.columnIndex="1" GridPane.rowIndex="1">
+            <items>
+                <CheckMenuItem fx:id="chHH" mnemonicParsing="false" text="HeadHunter"/>
+                <CheckMenuItem fx:id="chGorRab" mnemonicParsing="false" text="ГородРабот"/>
+            </items>
+            <GridPane.margin>
+                <Insets left="6.0"/>
+            </GridPane.margin>
+        </MenuButton>
+        <TextField fx:id="fieldLogPath" GridPane.rowIndex="3"/>
+        <Label text="Путь генерации лога" GridPane.rowIndex="2"/>
+        <Button fx:id="btnSelectLogPath" mnemonicParsing="false" text="Обзор..." GridPane.columnIndex="1"
+                GridPane.rowIndex="3">
+            <GridPane.margin>
+                <Insets left="6.0"/>
+            </GridPane.margin>
+        </Button>
+        <Label fx:id="labelThreadCountInfo" contentDisplay="CENTER" text="🛈" textFill="#6c7c6d"
+               GridPane.halignment="RIGHT"/>
+        <Label fx:id="labelSiteParsInfo" contentDisplay="CENTER" text="🛈" textFill="#6c7c6d"
+               GridPane.halignment="RIGHT" GridPane.rowIndex="1"/>
+        <Label fx:id="labelPathLogInfo" contentDisplay="CENTER" text="🛈" textFill="#6c7c6d"
+               GridPane.halignment="RIGHT" GridPane.rowIndex="2"/>
+    </GridPane>
+    <Label layoutX="17.0" layoutY="171.0" text="Анализ данных" AnchorPane.leftAnchor="14.0"
+           AnchorPane.topAnchor="171.0"/>
+    <Separator layoutX="17.0" layoutY="188.0" prefWidth="200.0" AnchorPane.leftAnchor="14.0"
+               AnchorPane.rightAnchor="14.0"/>
+    <GridPane layoutX="117.0" layoutY="191.0" prefHeight="85.0" prefWidth="406.0" AnchorPane.leftAnchor="14.0"
+              AnchorPane.rightAnchor="14.0">
+        <columnConstraints>
+            <ColumnConstraints hgrow="SOMETIMES" maxWidth="251.0" minWidth="10.0" prefWidth="251.0"/>
+            <ColumnConstraints hgrow="SOMETIMES" maxWidth="197.0" minWidth="10.0" prefWidth="155.0"/>
+        </columnConstraints>
+        <rowConstraints>
+            <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES"/>
+            <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES"/>
+            <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES"/>
+        </rowConstraints>
+        <Label text="Тип файла Excel"/>
+        <ComboBox fx:id="cbExcelType" prefWidth="150.0" promptText="fileType" GridPane.columnIndex="1">
+            <GridPane.margin>
+                <Insets left="6.0"/>
+            </GridPane.margin>
+        </ComboBox>
+        <Label text="Путь к обрабатываемому файлу" GridPane.rowIndex="1"/>
+        <TextField fx:id="fieldExcelPath" GridPane.rowIndex="2"/>
+        <Button fx:id="btnSelectExcelPath" mnemonicParsing="false" text="Обзор..." GridPane.columnIndex="1"
+                GridPane.rowIndex="2">
+            <GridPane.margin>
+                <Insets left="6.0"/>
+            </GridPane.margin>
+        </Button>
+        <Label fx:id="labelExcelTypeInfo" contentDisplay="CENTER" text="🛈" textFill="#6c7c6d"
+               GridPane.halignment="RIGHT"/>
+        <Label fx:id="labelPathExcelInfo" contentDisplay="CENTER" text="🛈" textFill="#6c7c6d"
+               GridPane.halignment="RIGHT" GridPane.rowIndex="1"/>
+    </GridPane>
+</AnchorPane>
