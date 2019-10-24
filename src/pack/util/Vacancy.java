@@ -3,7 +3,7 @@ package pack.util;
 import java.io.Serializable;
 
 /**
- *
+ * Контейнер вакансии
  * @author v4e
  */
 public class Vacancy implements Serializable{

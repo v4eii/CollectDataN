@@ -2,6 +2,7 @@ package pack.services;
 
 import pack.db.DBBean;
 import pack.db.entity.Category;
+import pack.db.entity.Skills;
 import pack.util.Config;
 
 import java.io.FileWriter;
@@ -9,7 +10,7 @@ import java.io.IOException;
 import java.util.*;
 
 /**
- * Набор обрабатывающих методов
+ * Сервис с методами для потоков
  * @author v4e
  */
 public class ThreadService extends Service{
@@ -20,61 +21,14 @@ public class ThreadService extends Service{
      * @param hits карта потока для заполнения
      */
     public static void firstAnalysis(String text, HashMap<String, Integer> hits,
-                                     String categoryName)
+                                     List<Skills> skillsForCategory)
     {
-        // TODO: Разобраться с запросом в базу и желательно изменить в потоках 'category' с String на Category для куда меньших запросов в БД
-//        Category category = DBBean.getInstance().getCategoryJPAController().findCategoryByName(categoryName);
-//        category.getSkillsCollection().forEach(skills -> {
-//            if (text.toLowerCase().contains(skills.getName().toLowerCase()))
-//                hits.put(skills.getName(), hits.get(skills.getName()) == null ? 0 : hits.get(skills.getName()) + 1);
-//        });
-
-
-//        if (text.contains("Java") || text.contains("java"))
-//        {
-//            hits.put("Java", (hits.get("Java") == null ? 0 : hits.get("Java")) + 1);
-//        }
-//        if (text.contains("C++") || text.contains("С++"))
-//        {
-//            hits.put("C++", (hits.get("C++") == null ? 0 : hits.get("C++")) + 1);
-//        }
-//        if (text.contains("PHP") || text.contains("php"))
-//        {
-//            hits.put("PHP", (hits.get("PHP") == null ? 0 : hits.get("PHP")) + 1);
-//        }
-//        if (text.contains("SQL") || text.contains("sql")) // TODO: noSQL != SQL
-//        {
-//            hits.put("SQL", (hits.get("SQL") == null ? 0 : hits.get("SQL")) + 1);
-//        }
-//        if (text.contains("JavaScript") || text.contains("js") || text.contains("JS") || text.contains("javascript") || text.contains("Javascript"))
-//        {
-//            hits.put("JavaScript", (hits.get("JavaScript") == null ? 0 : hits.get("JavaScript")) + 1);
-//        }
-//        if (text.contains("C#") || text.contains("С#"))
-//        {
-//            hits.put("C#", (hits.get("C#") == null ? 0 : hits.get("C#")) + 1);
-//        }
-//        if (text.contains("1C") || text.contains("1с") || text.contains("1С") || text.contains("1c"))
-//        {
-//            hits.put("1C", (hits.get("1C") == null ? 0 : hits.get("1C")) + 1);
-//        }
-//        if (text.contains("git") || text.contains("Git") || text.contains("GIT"))
-//        {
-//            hits.put("Git", (hits.get("Git") == null ? 0 : hits.get("Git")) + 1);
-//        }
-//        if (text.contains("Python") || text.contains("python"))
-//        {
-//            hits.put("Python", (hits.get("Python") == null ? 0 : hits.get("Python")) + 1);
-//        }
-//        if (text.contains("CSS") || text.contains("css") || text.contains("Css")
-//                || text.contains("HTML") || text.contains("html") || text.contains("Html"))
-//        {
-//            hits.put("HTML|CSS", (hits.get("HTML|CSS") == null ? 0 : hits.get("HTML|CSS")) + 1);
-//        }
-//        if (text.contains("Oracle") || text.contains("oracle"))
-//        {
-//            hits.put("Oracle", (hits.get("Oracle") == null ? 0 : hits.get("Oracle")));
-//        }
+        // TODO: noSQL != SQL
+        for (Skills s : skillsForCategory) {
+            if (text.toLowerCase().contains(s.getName().toLowerCase())) {
+                hits.put(s.getName(), hits.get(s.getName()) == null ? 0 : hits.get(s.getName()) + 1);
+            }
+        }
     }
     
     /**

@@ -13,8 +13,13 @@ import java.io.File;
 import java.net.URL;
 import java.util.ResourceBundle;
 
-/*
+/**
  *  Created by v4e on 13.07.2019
+ */
+
+/**
+ * Окно параметров, для редактирования полей класса Config
+ * @author v4e
  */
 public class OptionViewController implements Initializable {
     

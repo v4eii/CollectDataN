@@ -14,8 +14,13 @@ import pack.threads.Parsing;
 import java.net.URL;
 import java.util.ResourceBundle;
 
-/*
+/**
  *  Created by v4e on 13.07.2019
+ */
+
+/**
+ * Панель для запуска обработки сайтов
+ * @author v4e
  */
 public class CollectViewController implements Initializable {
 
@@ -43,6 +48,7 @@ public class CollectViewController implements Initializable {
             logGenerate = chLogGenerate.isSelected();
             blockElements.setValue(Boolean.TRUE);
             Parsing.run();
+            // TODO: Придумать что нибудь с блокировкой кнопок
             blockElements.setValue(Boolean.FALSE);
         });
         labelLogInfo.setTooltip(new Tooltip("Убедитесь что вы указали верный путь генерации лога в параметрах"));
@@ -57,7 +63,7 @@ public class CollectViewController implements Initializable {
         return logGenerate;
     }
 
-    static SimpleBooleanProperty getBlockElementsProperty() {
+    public static SimpleBooleanProperty getBlockElementsProperty() {
         return blockElements;
     }
 

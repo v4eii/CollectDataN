@@ -8,9 +8,15 @@ import org.controlsfx.dialog.ExceptionDialog;
 
 import java.util.Optional;
 
-/*
+/**
  *  Created by v4e on 23.07.2019
  */
+
+/**
+ * Сервис содержащий методы для вызова диалоговых окон
+ * @author v4e
+ */
+// TODO: Объединить все типы диалогов в один с добавлением аргумента key
 public class Service {
     
     public static void showInformationDialog(String header, String content) {

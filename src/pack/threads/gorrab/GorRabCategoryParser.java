@@ -5,6 +5,9 @@ import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
+import pack.db.DBBean;
+import pack.db.entity.Category;
+import pack.db.entity.Skills;
 import pack.threads.FinalProcessing;
 import pack.util.Config;
 import pack.util.Vacancy;
@@ -13,13 +16,14 @@ import pack.view.controllers.MainViewController;
 import java.io.IOException;
 import java.net.ConnectException;
 import java.util.HashMap;
+import java.util.List;
 import java.util.concurrent.Exchanger;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import java.util.stream.Collectors;
 
 /**
- * Парсер главной страницы
- *
+ * Парсер конкретной категории (ex: IT, информатика)
  * @author v4e
  */
 public class GorRabCategoryParser extends Thread {
@@ -28,17 +32,24 @@ public class GorRabCategoryParser extends Thread {
     // Распределяющий поток
     private GorRabDistribution dist;
     private Document doc;
-    private final String URL,
-            category;
+    private final String URL;
+    private final Category category;
     private static Integer numberThread = 0;
     private FinalProcessing finalThread;
     private HashMap<String, Boolean> processesCompletion;
+    private List<Skills> skillsForCategory;
 
-    public GorRabCategoryParser(String URL, String category) {
+    /**
+     * Инициализация объектов, сбор необходимых слов для анализа
+     * @param URL ссылка на страницу с объявлениями определенной категории
+     * @param category категория, для поиска ключевых слов из БД
+     */
+    public GorRabCategoryParser(String URL, Category category) {
         setPriority(9);
         exchanger = new Exchanger<>();
+        skillsForCategory = DBBean.getInstance().getSkillsJPAController().findSkillsEntities().stream().filter(skills -> skills.getIdCategory().equals(category)).collect(Collectors.toList());
         finalThread = new FinalProcessing();
-        finalThread.setName("THREAD@" + category + " GorRab#" + getNumberThread());
+        finalThread.setName("THREAD@" + category.getName() + " GorRab#" + getNumberThread());
         addNumberThread();
         processesCompletion = new HashMap<>();
         this.URL = URL;
@@ -112,7 +123,7 @@ public class GorRabCategoryParser extends Thread {
         numberThread++;
     }
 
-    public String getCategory() {
+    public Category getCategory() {
         return category;
     }
 
@@ -124,8 +135,11 @@ public class GorRabCategoryParser extends Thread {
         return finalThread;
     }
 
-    public HashMap<String, Boolean> getProcessesCompletion()
-    {
+    public HashMap<String, Boolean> getProcessesCompletion() {
         return processesCompletion;
+    }
+
+    public List<Skills> getSkillsForCategory() {
+        return skillsForCategory;
     }
 }

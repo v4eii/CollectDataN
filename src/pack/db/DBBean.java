@@ -10,6 +10,11 @@ import javax.persistence.PersistenceUnit;
 /**
  * Created by v4e on 22.10.2019
  */
+
+/**
+ * Класс отвечающий за работу с БД
+ * @author v4e
+ */
 public class DBBean {
 
     private CategoryJPAController categoryJPAController;

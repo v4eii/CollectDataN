@@ -4,12 +4,18 @@ import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
+import pack.db.DBBean;
+import pack.db.entity.Category;
 import pack.util.Config;
 
 import java.io.IOException;
 
 /**
  * Created by v4e on 12.10.2019
+ */
+
+/**
+ * Отвечает за запуск парсеров по категориям, аналог HHParser
  */
 public class GorRabParser {
 
@@ -23,8 +29,11 @@ public class GorRabParser {
             Elements profs = doc.getElementById("vacancy").getElementsByClass("clearfix str-crop");
             for (Element e : profs) {
                 String href = e.attr("abs:href");
-                GorRabCategoryParser tmp = new GorRabCategoryParser(href, e.text().replaceAll("[^А-Яа-я ]", "").trim());
-                tmp.start();
+                Category category = DBBean.getInstance().getCategoryJPAController().findCategoryByName(e.text().replaceAll("[^-А-я,A-z ]", "").trim());
+                if (category != null) {
+                    GorRabCategoryParser tmp = new GorRabCategoryParser(href, category);
+                    tmp.start();
+                }
             }
         }
         catch (IOException e) {

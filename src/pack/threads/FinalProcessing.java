@@ -14,7 +14,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
- * Финальный поток подсчета
+ * Финальный поток для подсчета
  * @author v4e
  */
 public class FinalProcessing extends Thread {
@@ -110,7 +110,6 @@ public class FinalProcessing extends Thread {
 //        Platform.runLater((Runnable) () -> {
 //            if (Service.showConfirmDialog("Сохранение данных","Сохранить данные?",
 //                    "Процесс сбора данных завершен, сохранить результат?").get() == ButtonType.OK) {
-//                //TODO: tmp
 //                System.out.println("TMP");
 //            }
 //        });

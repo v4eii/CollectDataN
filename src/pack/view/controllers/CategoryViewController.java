@@ -20,8 +20,7 @@ import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
 /**
- * FXML Controller class
- *
+ * Панель просмотра и редактирования компетенций по специализациям
  * @author v4e
  */
 public class CategoryViewController implements Initializable {

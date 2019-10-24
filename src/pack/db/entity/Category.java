@@ -1,7 +1,6 @@
 package pack.db.entity;
 
 import javax.persistence.*;
-
 import java.io.Serializable;
 import java.util.Collection;
 
@@ -87,7 +86,6 @@ public class Category implements Serializable {
     @Override
     public boolean equals(Object object)
     {
-        // TODO: Warning - this method won't work in the case the id fields are not set
         if (!(object instanceof pack.db.entity.Category))
         {
             return false;

@@ -213,6 +213,24 @@ public class CategoryJPAController implements Serializable {
         }
     }
 
+    // TODO: Костыль. Толь я тупой, толь лыжи не едут. При попытке создания namedQuery и присваивания параметра q.setParametr("name", name),
+    //  что бы ни было в строке name он устанавливает параметр name = "name". Лучше конечно после поправить
+    public Category findCategoryByName(String name) {
+        EntityManager em = getEntityManager();
+        try {
+            Query q = em.createNativeQuery("SELECT * FROM category WHERE name = \'" + name + "\'");
+            Category c = null;
+            if (q.getSingleResult() instanceof Object[]) {
+                Object[] ar = (Object[]) q.getSingleResult();
+                c = new Category((Integer) ar[0], (String) ar[1]);
+            }
+            return c;
+        }
+        finally {
+            em.close();
+        }
+    }
+
 
     public int getCategoryCount()
     {

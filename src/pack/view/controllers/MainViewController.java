@@ -22,8 +22,13 @@ import java.io.IOException;
 import java.net.URL;
 import java.util.ResourceBundle;
 
-/*
+/**
  *  Created by v4e on 13.07.2019
+ */
+
+/**
+ * Основная форма приложения, пустое окно заполняемое выбранными панелями
+ * @author v4e
  */
 public class MainViewController implements Initializable {
     
@@ -42,9 +47,6 @@ public class MainViewController implements Initializable {
     private static AnalysisViewController analysisViewController;
     
     private static Stage optionStage;
-    
-    private XSSFSheet xSheet;
-    private HSSFSheet hSheet;
     
     @Override
     public void initialize(URL location, ResourceBundle resources) {
@@ -127,68 +129,8 @@ public class MainViewController implements Initializable {
                 bPane.setCenter(analysisViewController.getPane());
             }
         });
-        
-        //TODO: tmp
+
         mAbout.setOnAction(event -> {
-//            ExcelService.connectFile();
-//            Iterator<Row> rowIterator;
-//            if (Config.getExcelType().equals("xlsx")) {
-//                xSheet = ExcelService.getXWorkbook().getSheetAt(0);
-//                rowIterator = xSheet.iterator();
-//            }
-//            else {
-//                hSheet = ExcelService.getHWorkbook().getSheetAt(0);
-//                rowIterator = hSheet.iterator();
-//            }
-//
-//            while(rowIterator.hasNext())
-//            {
-//                Row row = rowIterator.next();
-//                Iterator<Cell> cellIterator = row.cellIterator();
-//                while(cellIterator.hasNext())
-//                {
-//                    Cell cell = cellIterator.next();
-//                    CellType cellType = cell.getCellType();
-//                    FormulaEvaluator evaluator;
-//                    switch (cellType)
-//                    {
-//                        case _NONE:
-//                        case BLANK:
-//                            System.out.println();
-//                            System.out.println("\t");
-//                            break;
-//                        case BOOLEAN:
-//                            System.out.println(cell.getBooleanCellValue());
-//                            System.out.println("\t");
-//                            break;
-//                        case FORMULA:
-//                            System.out.println(cell.getCellFormula());
-//                            System.out.println("\t");
-//                            if (Config.getExcelType().equals("xlsx")) {
-//                                evaluator = ExcelService.getXWorkbook().getCreationHelper().createFormulaEvaluator();
-//                            }
-//                            else {
-//                                evaluator = ExcelService.getHWorkbook().getCreationHelper().createFormulaEvaluator();
-//                            }
-//                            System.out.println(evaluator.evaluate(cell).getNumberValue());
-//                            break;
-//                        case NUMERIC:
-//                            System.out.println(cell.getNumericCellValue());
-//                            System.out.println("\t");
-//                            break;
-//                        case STRING:
-//                            System.out.println(cell.getStringCellValue());
-//                            System.out.println("\t");
-//                            break;
-//                        case ERROR:
-//                            System.out.println("!");
-//                            System.out.println("\t");
-//                            break;
-//
-//                    }
-//                }
-//                System.out.println();
-//            }
         });
     }
     

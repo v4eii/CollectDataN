@@ -7,8 +7,14 @@ import javafx.scene.layout.AnchorPane;
 import java.net.URL;
 import java.util.ResourceBundle;
 
-/*
+/**
  *  Created by v4e on 23.07.2019
+ */
+
+/**
+ * Панель анализа, на данный момент не используется
+ * @deprecated
+ * @author v4e
  */
 public class AnalysisViewController implements Initializable {
     

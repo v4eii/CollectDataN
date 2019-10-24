@@ -7,13 +7,20 @@ import pack.threads.gorrab.GorRabParser;
 import pack.util.Config;
 import pack.view.controllers.MainViewController;
 
-/*
+/**
  *  Created by v4e on 13.07.2019
+ */
+
+/**
+ * Класс запускающий процесс парсинга всех сайтов
  */
 public class Parsing {
 
     public static void run() {
 
+        // TODO: Пришла гениальная мысль, потоки одной категории, но с разных сайтов никак не связаны и выдают только результаты своих сайтов.
+        //  Придумать как это попровить, добавить по еще одному уже прям финальному потоку на категорию или исправить уже существующий Final
+        //  Я устал босс.
         if (Config.getHHSelect()) {
             HHParser.run();
         }

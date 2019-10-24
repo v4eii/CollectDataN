@@ -10,11 +10,20 @@ import java.io.IOException;
 /*
  *  Created by v4e on 14.07.2019
  */
+
+/**
+ * Класс для работы с Excel. На данный момент не нужен
+ * @deprecated
+ * @author v4e
+ */
 public class ExcelService extends Service {
 
     private static XSSFWorkbook xWorkbook;
     private static HSSFWorkbook hWorkbook;
-    
+
+    /**
+     * Создание объекта для управления обрабатываемым файлом Excel
+     */
     public static void connectFile()
     {
         if (Config.getExcelType().equals("xlsx")) {

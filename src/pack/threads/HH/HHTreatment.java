@@ -3,6 +3,7 @@ package pack.threads.HH;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.select.Elements;
+import pack.db.entity.Category;
 import pack.services.ThreadService;
 import pack.threads.Parsing;
 import pack.util.Vacancy;
@@ -14,8 +15,7 @@ import java.util.HashMap;
 import java.util.concurrent.Exchanger;
 
 /**
- * Обрабатывающие потоки
- *
+ * Обрабатывающий поток конкретного заявления
  * @author v4e
  */
 public class HHTreatment extends Thread {
@@ -32,11 +32,21 @@ public class HHTreatment extends Thread {
     private HashMap<String, Integer> hits;
     private Document doc;
     private ArrayList<String> logData;
-    private String category;
+    private Category category;
     private HHCategoryParser hhCategoryParser;
 
+    /**
+     * Инициализация объектов
+     * @param exchanger объект обмена с распределяющим потоком
+     * @param exchangerToAnalysis объект для обмена с финальным потоком
+     * @param exchangerToLog объект обмена для генерации лога
+     * @param group группа принадлежности распределяющего потока
+     * @param name имя потока
+     * @param category категория обработки
+     * @param hhCategoryParser парсер категории
+     */
     HHTreatment(Exchanger<Vacancy> exchanger, Exchanger<HashMap<String, Integer>> exchangerToAnalysis,
-                Exchanger<ArrayList<String>> exchangerToLog, ThreadGroup group, String name, String category, HHCategoryParser hhCategoryParser) {
+                Exchanger<ArrayList<String>> exchangerToLog, ThreadGroup group, String name, Category category, HHCategoryParser hhCategoryParser) {
         super(group, name);
         this.hhCategoryParser = hhCategoryParser;
         this.exchanger = exchanger;
@@ -62,16 +72,15 @@ public class HHTreatment extends Thread {
                     Elements keySkills = doc.getElementsByClass("bloko-tag bloko-tag_inline Bloko-TagList-Tag ");
                     if (keySkills == null || keySkills.isEmpty()) {
                         String textVacancy = doc.getElementsByClass("g-user-content").text();
-                        ThreadService.firstAnalysis(textVacancy, hits, category);
+                        ThreadService.firstAnalysis(textVacancy, hits, hhCategoryParser.getSkillsForCategory());
                         System.out.println(this.getName() + " " + vacancy.getUrlVacancy());
-                        System.out.println(this.getName() + " " + vacancy.getUrlVacancy() + " Ready");
                     }
                     else {
                         StringBuilder sb = new StringBuilder();
                         keySkills.forEach((e) ->
                                 sb.append(e.text()).append(" "));
                         // Ключевые слова наше всё
-                        ThreadService.firstAnalysis(sb.toString(), hits, category);
+                        ThreadService.firstAnalysis(sb.toString(), hits, hhCategoryParser.getSkillsForCategory());
                         System.out.println(this.getName() + " " + vacancy.getUrlVacancy());
                     }
                     if (CollectViewController.getLogGenerate())

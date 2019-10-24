@@ -5,8 +5,13 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.Properties;
 
-/*
+/**
  *  Created by v4e on 14.07.2019
+ */
+
+/**
+ * Объект для работы с параметрами программы
+ * @author v4e
  */
 public class Config {
     private static Properties prop;
@@ -19,9 +24,10 @@ public class Config {
     private static Integer threadCount;
     private static Boolean HHSelect,
             GorRabSelect;
-    
- 
-    
+
+    /**
+     * Открытие файла конфигурации и сохранение всех параметров в текущем состоянии
+     */
     public static void initializeConfig()
     {
         prop = new Properties();
@@ -47,7 +53,10 @@ public class Config {
             e.printStackTrace();
         }
     }
-    
+
+    /**
+     * Обновление файла конфигурации в соответствтии с внесенными изменениями
+     */
     public static void saveConfig()
     {
         try (FileOutputStream fos = new FileOutputStream("src/pack/resources/config.properties"))

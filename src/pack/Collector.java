@@ -9,7 +9,7 @@ import javafx.stage.StageStyle;
 import pack.util.Config;
 
 /**
- *
+ * Ну тут сложно что-либо сказать
  * @author v4e
  */
 public class Collector extends Application{

@@ -1,6 +1,7 @@
 package pack.threads.HH;
 
 import javafx.application.Platform;
+import pack.db.entity.Category;
 import pack.threads.Parsing;
 import pack.util.Config;
 import pack.util.Vacancy;
@@ -11,7 +12,7 @@ import java.util.List;
 import java.util.concurrent.Exchanger;
 
 /**
- * Распределение объявления по обрабатывающим потокам
+ * Распределение объявлений по обрабатывающим потокам
  * @author v4e
  */
 public class HHDistribution extends Thread {
@@ -29,9 +30,15 @@ public class HHDistribution extends Thread {
     // Статус потока
     private boolean active;
     private HHCategoryParser hhCategoryParser;
-    private String category;
+    private final Category category;
 
-    HHDistribution(Exchanger<Vacancy> exchanger, String category, HHCategoryParser hhCategoryParser)
+    /**
+     * Инициализация объектов передачи и обработки
+     * @param exchanger объект для обмена между парсером категории и данным потоком
+     * @param category категория обработки
+     * @param hhCategoryParser парсер категории, используется для доступа к финальным потокам, обрабатываемых слов и т.д.
+     */
+    HHDistribution(Exchanger<Vacancy> exchanger, Category category, HHCategoryParser hhCategoryParser)
     {
         this.hhCategoryParser = hhCategoryParser;
         this.mainExchanger = exchanger;

@@ -2,6 +2,7 @@ package pack.threads.gorrab;
 
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
+import pack.db.entity.Category;
 import pack.services.ThreadService;
 import pack.util.Vacancy;
 import pack.view.controllers.CollectViewController;
@@ -30,11 +31,21 @@ public class GorRabTreatment extends Thread {
     private Document doc;
     // Для генерации лога
     private ArrayList<String> logData;
-    private String category;
+    private Category category;
     private GorRabCategoryParser gorRabCategoryParser;
 
+    /**
+     * Инициализация объектов
+     * @param exchanger объект обмена с распределяющим потоком
+     * @param exchangerToAnalysis объект для обмена с финальным потоком
+     * @param exchangerToLog объект обмена для генерации лога
+     * @param group группа принадлежности распределяющего потока
+     * @param name имя потока
+     * @param category категория обработки
+     * @param gorRabCategoryParser парсер категории
+     */
     GorRabTreatment(Exchanger<Vacancy> exchanger, Exchanger<HashMap<String, Integer>> exchangerToAnalysis,
-                    Exchanger<ArrayList<String>> exchangerToLog, ThreadGroup group, String name, String category,
+                    Exchanger<ArrayList<String>> exchangerToLog, ThreadGroup group, String name, Category category,
                     GorRabCategoryParser gorRabCategoryParser)
     {
         super(group, name);
@@ -64,7 +75,7 @@ public class GorRabTreatment extends Thread {
                 {
                     doc = Jsoup.connect(vacancy.getUrlVacancy()).get();
                     String textVacancy = doc.getElementsByClass("vacancy-description clearfix").text();
-                    ThreadService.firstAnalysis(textVacancy, hits, category);
+                    ThreadService.firstAnalysis(textVacancy, hits, gorRabCategoryParser.getSkillsForCategory());
                     System.out.println(this.getName() + " " + vacancy.getUrlVacancy());
                     if (CollectViewController.getLogGenerate())
                         logData.add(name + " " + vacancy.getNameVacancy() + "\n");

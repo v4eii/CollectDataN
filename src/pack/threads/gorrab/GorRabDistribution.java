@@ -1,6 +1,7 @@
 package pack.threads.gorrab;
 
 import javafx.application.Platform;
+import pack.db.entity.Category;
 import pack.threads.Parsing;
 import pack.util.Config;
 import pack.util.Vacancy;
@@ -10,7 +11,7 @@ import java.util.List;
 import java.util.concurrent.Exchanger;
 
 /**
- * Распределение объявления по обрабатывающим потокам
+ * Распределение объявлений по обрабатывающим потокам
  * @author v4e
  */
 public class GorRabDistribution extends Thread {
@@ -19,7 +20,6 @@ public class GorRabDistribution extends Thread {
      * mainExchanger - обмен с парсером
      * exchanger - обмен с обрабатывающими потоками
      */
-
     private Exchanger<Vacancy> mainExchanger,
                                exchanger;
     // Группа обрабатывающих потоков
@@ -29,9 +29,15 @@ public class GorRabDistribution extends Thread {
     // Статус потока
     private boolean active;
     private GorRabCategoryParser gorRabCategoryParser;
-    private String category;
+    private Category category;
 
-    GorRabDistribution(Exchanger<Vacancy> exchanger, String category, GorRabCategoryParser gorRabCategoryParser)
+    /**
+     * Инициализация объектов передачи и обработки
+     * @param exchanger объект для обмена между парсером категории и данным потоком
+     * @param category категория обработки
+     * @param gorRabCategoryParser парсер категории, используется для доступа к финальным потокам, обрабатываемых слов и т.д.
+     */
+    GorRabDistribution(Exchanger<Vacancy> exchanger, Category category, GorRabCategoryParser gorRabCategoryParser)
     {
         this.gorRabCategoryParser = gorRabCategoryParser;
         this.mainExchanger = exchanger;
