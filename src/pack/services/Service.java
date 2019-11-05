@@ -4,7 +4,6 @@ import javafx.scene.control.Alert;
 import javafx.scene.control.ButtonType;
 import javafx.scene.control.Dialog;
 import javafx.stage.StageStyle;
-import org.controlsfx.dialog.ExceptionDialog;
 
 import java.util.Optional;
 
@@ -41,16 +40,16 @@ public class Service {
         dialog.showAndWait();
     }
     
-    public static void showErrorDialog(Throwable ex, String header, String content) {
-        ExceptionDialog dialog = new ExceptionDialog(ex);
-        dialog.setTitle("Ошибка");
-        dialog.setHeaderText(header);
-        dialog.initStyle(StageStyle.UTILITY);
-        if (!content.isEmpty())
-            dialog.setContentText(content);
-
-        dialog.showAndWait();
-    }
+//    public static void showErrorDialog(Throwable ex, String header, String content) {
+//        ExceptionDialog dialog = new ExceptionDialog(ex);
+//        dialog.setTitle("Ошибка");
+//        dialog.setHeaderText(header);
+//        dialog.initStyle(StageStyle.UTILITY);
+//        if (!content.isEmpty())
+//            dialog.setContentText(content);
+//
+//        dialog.showAndWait();
+//    }
     
     public static Optional<ButtonType> showConfirmDialog(String title, String header, String content) {
         Dialog<ButtonType> dialog = new Alert(Alert.AlertType.CONFIRMATION, content, ButtonType.OK, ButtonType.CANCEL);

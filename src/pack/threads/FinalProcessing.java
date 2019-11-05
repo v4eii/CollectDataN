@@ -1,14 +1,19 @@
 package pack.threads;
 
+import javafx.application.Platform;
+import javafx.collections.FXCollections;
+import javafx.scene.Scene;
+import javafx.scene.control.ListView;
+import javafx.scene.layout.BorderPane;
+import javafx.stage.Stage;
+import javafx.stage.StageStyle;
+import pack.db.entity.Category;
 import pack.services.ThreadService;
 import pack.util.Config;
 import pack.view.controllers.CollectViewController;
 import pack.view.controllers.MainViewController;
 import java.text.DecimalFormat;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.concurrent.Exchanger;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -24,21 +29,31 @@ public class FinalProcessing extends Thread {
      */
     private Map<String, Integer> allHits;
     private List<String> fullLogList;
+    private Set<String> allCompetency;
     private Exchanger<HashMap<String, Integer>> exchanger;
     private Exchanger<ArrayList<String>> exchangerToLog;
+    private Exchanger<HashSet<String>> exchangerToCollect;
     /**
      * Список карт потоков
      */
     private List<HashMap<String, Integer>> mapList;
+    private List<HashSet<String>> setList;
     private List<List<String>> logList;
+    private Category category;
     // Общее число ключевых слов
     private int countHits = 0;
+    private CollectViewController.PARSING_TARGET parsingTarget;
 
-    public FinalProcessing()
+    public FinalProcessing(Category category, CollectViewController.PARSING_TARGET parsingTarget)
     {
+        this.parsingTarget = parsingTarget;
         exchanger = new Exchanger<>();
+        exchangerToCollect = new Exchanger<>();
         allHits = null;
+        allCompetency = null;
+        this.category = category;
         mapList = new ArrayList<>();
+        setList = new ArrayList<>();
         if (CollectViewController.getLogGenerate()) {
             exchangerToLog = new Exchanger<>();
             logList = new ArrayList<>();
@@ -57,65 +72,71 @@ public class FinalProcessing extends Thread {
             Logger.getLogger(FinalProcessing.class.getName()).log(Level.SEVERE, null, ex);
         }
 
-//        Platform.runLater(() -> {
-//            MainViewController.getCollectViewController().getTextInfo().appendText("Начался сбор результатов..." + "\n");
-//        });
-
         // Сбор карт из потоков.
         int threadCount = Config.getThreadCount();
-        for (int i = 0; i < threadCount; i++)
-        {
-            try
-            {
-                HashMap<String, Integer> x = null;
-                mapList.add(exchanger.exchange(x));
+        // TODO: Ну можно не x*2
+        if (parsingTarget.equals(CollectViewController.PARSING_TARGET.AnalysisCompetency)) {
+            for (int i = 0; i < threadCount * 2; i++) {
+                try {
+                    HashMap<String, Integer> x = null;
+                    mapList.add(exchanger.exchange(x));
+                }
+                catch (InterruptedException ex) {
+                    Logger.getLogger(FinalProcessing.class.getName()).log(Level.SEVERE, null, ex);
+                }
             }
-            catch (InterruptedException ex)
-            {
-                Logger.getLogger(FinalProcessing.class.getName()).log(Level.SEVERE, null, ex);
+            //Сбор листов для лога
+            if (CollectViewController.getLogGenerate()) {
+                for (int i = 0; i < threadCount; i++) {
+                    try {
+                        ArrayList<String> x = null;
+                        logList.add(exchangerToLog.exchange(x));
+                    }
+                    catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+                }
             }
+
+            allHits = ThreadService.collectMap(mapList);
+            if (CollectViewController.getLogGenerate())
+                ThreadService.generateLog(logList);
+            allHits.values().forEach((Integer t) ->
+                    countHits += t);
+            allHits.forEach((String str, Integer i) ->
+            {
+                double tmp = i.doubleValue() / countHits * 100;
+                System.out.println(str + " " + tmp + "%");
+                MainViewController.getCollectViewController().getTextInfo().appendText(str + " " + new DecimalFormat("#.##").format(tmp) + "%" + "\n");
+            });
         }
-        //Сбор листов для лога
-        if (CollectViewController.getLogGenerate()) {
+        else {
+            // FixMe: заделать как x*2, а мб и не на 2
             for (int i = 0; i < threadCount; i++) {
                 try {
-                    ArrayList<String> x = null;
-                    logList.add(exchangerToLog.exchange(x));
+                    HashSet<String> x = null;
+                    setList.add(exchangerToCollect.exchange(x));
                 }
                 catch (InterruptedException e) {
                     e.printStackTrace();
                 }
             }
+            allCompetency = ThreadService.collectSet(setList);
+//            Platform.runLater(() -> {
+//                Stage stage = new Stage(StageStyle.UTILITY);
+//                stage.setScene(new Scene(new BorderPane(new ListView<String>(FXCollections.observableArrayList(allCompetency)))));
+//                stage.showAndWait();
+//            });
+            System.out.println(allCompetency.size());
+            allCompetency.forEach(System.out::println);
         }
-    
-//        MainViewController.getCollectViewController().getTextInfo().appendText("Начался подсчет результатов..." + "\n");
-        allHits = ThreadService.collectMap(mapList);
-        if (CollectViewController.getLogGenerate())
-            ThreadService.generateLog(logList);
-        allHits.values().forEach((Integer t) ->
-                countHits += t);
-        allHits.forEach((String str, Integer i) ->
-        {
-            double tmp = i.doubleValue()/countHits*100;
-            MainViewController.getCollectViewController().getTextInfo().appendText(str + " " + new DecimalFormat("#.##").format(tmp) + "%" + "\n");
-        });
-        
-        
 
-//        Platform.runLater(() -> {
-//            MainViewController.getCollectViewController().getTextInfo().appendText("Завершение процесса...\n");
-//        });
         System.out.println(getName() + " Stopped");
-
-//        Platform.runLater((Runnable) () -> {
-//            if (Service.showConfirmDialog("Сохранение данных","Сохранить данные?",
-//                    "Процесс сбора данных завершен, сохранить результат?").get() == ButtonType.OK) {
-//                System.out.println("TMP");
-//            }
-//        });
     }
-    
-    
+
+    public Exchanger<HashSet<String>> getExchangerToCollect() {
+        return exchangerToCollect;
+    }
 
     public Exchanger<HashMap<String, Integer>> getExchanger()
     {
@@ -124,5 +145,9 @@ public class FinalProcessing extends Thread {
     
     public Exchanger<ArrayList<String>> getExchangerToLog() {
         return exchangerToLog;
+    }
+
+    public Category getCategory() {
+        return category;
     }
 }

@@ -7,7 +7,10 @@ import org.jsoup.select.Elements;
 import pack.db.DBBean;
 import pack.db.entity.Category;
 import pack.db.entity.Skills;
+import pack.services.ThreadService;
+import pack.threads.CategoryParser;
 import pack.threads.FinalProcessing;
+import pack.threads.Parsing;
 import pack.util.Vacancy;
 
 import java.io.IOException;
@@ -21,7 +24,7 @@ import java.util.stream.Collectors;
  * Парсер конкретной категории (ex: IT, информатика)
  * @author v4e
  */
-public class HHCategoryParser extends Thread {
+public class HHCategoryParser extends Thread implements CategoryParser {
 
     private Exchanger<Vacancy> exchanger;
     // Распределяющий поток
@@ -42,11 +45,12 @@ public class HHCategoryParser extends Thread {
     public HHCategoryParser(String URL, Category category) {
         setPriority(9);
         exchanger = new Exchanger<>();
-        skillsForCategory = DBBean.getInstance().getSkillsJPAController().findSkillsEntities().stream().filter(skills -> {
-            return skills.getIdCategory().equals(category);
-        }).collect(Collectors.toList());
-        finalThread = new FinalProcessing();
-        finalThread.setName("THREAD@" + category.getName() + " HH#" + getNumberThread());
+        skillsForCategory = DBBean.getInstance().getSkillsJPAController().findSkillsEntities()
+                .stream().filter(skills -> skills.getIdCategory().equals(category)).collect(Collectors.toList());
+        Parsing.getFinalProcessingList().forEach(finalProcessing -> {
+            if (finalProcessing.getCategory().equals(category))
+                finalThread = finalProcessing;
+        });
         addNumberThread();
         processesCompletion = new HashMap<>();
         this.URL = URL;
@@ -60,49 +64,24 @@ public class HHCategoryParser extends Thread {
         try {
             System.out.println(URL + " start");
             doc = Jsoup.connect(URL).get();
-            while (true) {
-                Elements vacancyList = doc.getElementsByClass("vacancy-serp");
-                vacancyList = vacancyList.get(0).getElementsByClass("resume-search-item__name");
-                for (Element e : vacancyList) {
-                    Elements temp = e.getElementsByClass("bloko-link HH-LinkModifier");
-                    String nameVacancy = temp.text();
 
-                    String urlVacancy = temp.attr("abs:href");
-                    Vacancy tmp = new Vacancy(nameVacancy, urlVacancy);
-                    exchanger.exchange(tmp);
-                    HHParser.addElementsCount();
-                }
-                Elements nextPage = doc.getElementsByClass("bloko-button HH-Pager-Controls-Next HH-Pager-Control");
+            do {
+                parsePage();
+//                dist.setActive(false);
+//                System.out.println(this.getName() + " Stopped");
+//                break;
+            } while (getNextPage());
 
-                dist.setActive(false);
-                System.out.println(this.getName() + " Stopped");
-                break;
-
-                // TODO: Я бы не стал снимать этот коммент
-//                if (nextPage.isEmpty())
-//                {
-//                    dist.setActive(false);
-//                    break;
-//                }
-//                else
-//                {
-//                    doc = Jsoup.connect(nextPage.attr("abs:href")).get();
-//                }
-            }
-            finalThread.start();
+            if (!finalThread.isAlive())
+                finalThread.start();
             dist.interrupt();
             numberThread = 0;
 
         }
         //TODO: Проблема "Connection timed out: connect". Огромная нагрузка на сеть? Не хватает скорости? (при обработке HH + GR). Попытка реконекта не сильно помогает
         catch (ConnectException ex) {
-            try {
-                Thread.sleep(5000);
-                doc = Jsoup.connect(doc.getElementsByClass("bloko-button HH-Pager-Controls-Next HH-Pager-Control").attr("abs:href")).get();
-            }
-            catch (IOException | InterruptedException e) {
-                e.printStackTrace();
-            }
+            ThreadService.showWarningDialog("Ошибка подключения",
+                    "Произошла ошибка подключения, проверьте ваше интернет соединение");
         }
         catch (IOException | InterruptedException ex) {
             ex.printStackTrace();
@@ -135,5 +114,35 @@ public class HHCategoryParser extends Thread {
 
     public List<Skills> getSkillsForCategory() {
         return skillsForCategory;
+    }
+
+    @Override
+    public void parsePage() throws InterruptedException {
+        Elements vacancyList = doc.getElementsByClass("vacancy-serp");
+        vacancyList = vacancyList.get(0).getElementsByClass("resume-search-item__name");
+        for (Element e : vacancyList) {
+            Elements temp = e.getElementsByClass("bloko-link HH-LinkModifier");
+            String nameVacancy = temp.text();
+
+            String urlVacancy = temp.attr("abs:href");
+            Vacancy tmp = new Vacancy(nameVacancy, urlVacancy);
+            exchanger.exchange(tmp);
+            HHParser.addElementsCount();
+        }
+    }
+
+    @Override
+    public boolean getNextPage() throws IOException {
+        Elements nextPage = doc.getElementsByClass("bloko-button HH-Pager-Controls-Next HH-Pager-Control");
+        if (nextPage.isEmpty())
+        {
+            dist.setActive(false);
+            return false;
+        }
+        else
+        {
+            doc = Jsoup.connect(nextPage.attr("abs:href")).get();
+            return true;
+        }
     }
 }

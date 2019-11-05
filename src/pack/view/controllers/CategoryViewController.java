@@ -13,6 +13,7 @@ import pack.db.entity.exceptions.NonexistentEntityException;
 import pack.services.Service;
 
 import java.net.URL;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
 import java.util.ResourceBundle;
@@ -74,7 +75,7 @@ public class CategoryViewController implements Initializable {
                     }
                 }
                 catch (NonexistentEntityException e) {
-                    Service.showErrorDialog(e, "Ошибка удаления", "Произошла ошибка удаления данных");
+//                    Service.showErrorDialog(e, "Ошибка удаления", "Произошла ошибка удаления данных");
                 }
             }
             else {
@@ -82,7 +83,7 @@ public class CategoryViewController implements Initializable {
             }
         });
 
-        skillsListView.setCellFactory(param -> new ListCell<>() {
+        skillsListView.setCellFactory(param -> new ListCell<Skills>() {
             @Override
             protected void updateItem(Skills item, boolean empty) {
                 super.updateItem(item, empty);
@@ -95,8 +96,14 @@ public class CategoryViewController implements Initializable {
             }
         });
 
+        categoryList.sort((o1, o2) -> {
+            if (o1.getIdCategory() > o2.getIdCategory())
+                return 1;
+            else
+                return -1;
+        });
         categoryListView.setItems((ObservableList<Category>) categoryList);
-        categoryListView.setCellFactory(param -> new ListCell<>() {
+        categoryListView.setCellFactory(param -> new ListCell<Category>() {
             @Override
             protected void updateItem(Category item, boolean empty) {
                 super.updateItem(item, empty);

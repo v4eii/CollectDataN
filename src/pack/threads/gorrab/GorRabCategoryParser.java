@@ -8,7 +8,9 @@ import org.jsoup.select.Elements;
 import pack.db.DBBean;
 import pack.db.entity.Category;
 import pack.db.entity.Skills;
+import pack.threads.CategoryParser;
 import pack.threads.FinalProcessing;
+import pack.threads.Parsing;
 import pack.util.Config;
 import pack.util.Vacancy;
 import pack.view.controllers.MainViewController;
@@ -26,7 +28,7 @@ import java.util.stream.Collectors;
  * Парсер конкретной категории (ex: IT, информатика)
  * @author v4e
  */
-public class GorRabCategoryParser extends Thread {
+public class GorRabCategoryParser extends Thread implements CategoryParser {
 
     private Exchanger<Vacancy> exchanger;
     // Распределяющий поток
@@ -48,8 +50,10 @@ public class GorRabCategoryParser extends Thread {
         setPriority(9);
         exchanger = new Exchanger<>();
         skillsForCategory = DBBean.getInstance().getSkillsJPAController().findSkillsEntities().stream().filter(skills -> skills.getIdCategory().equals(category)).collect(Collectors.toList());
-        finalThread = new FinalProcessing();
-        finalThread.setName("THREAD@" + category.getName() + " GorRab#" + getNumberThread());
+        Parsing.getFinalProcessingList().forEach(finalProcessing -> {
+            if (finalProcessing.getCategory().equals(category))
+                finalThread = finalProcessing;
+        });
         addNumberThread();
         processesCompletion = new HashMap<>();
         this.URL = URL;
@@ -64,39 +68,16 @@ public class GorRabCategoryParser extends Thread {
             System.out.println(URL + " start");
             doc = Jsoup.connect(URL).get();
 
-            while (true) {
-                Elements vacancyList = doc.getElementsByTag("h2");
-                for (Element e : vacancyList) {
-                    Elements temp = e.getElementsByTag("a");
-                    String nameVacancy = temp.text();
-                    String urlVacancy = temp.attr("abs:href");
-                    Vacancy tmp = new Vacancy(nameVacancy, urlVacancy);
-                    exchanger.exchange(tmp);
-                    GorRabParser.addElementCount();
+            do {
+                parsePage();
+//                dist.setActive(false);
+//                System.out.println(this.getName() + " Stopped");
+//                break;
+            } while (getNextPage());
 
-                }
-
-                Element nextPage = doc.getElementsByClass("pager-item pager-item_type_after").get(0);
-
-                dist.setActive(false);
-                System.out.println(this.getName() + " Stopped");
-                break;
-
-//               if (nextPage == null)
-//               {
-//                   dist.setActive(false);
-//                   break;
-//               }
-//               else
-//               {
-//                   doc = Jsoup.connect(nextPage.attr("abs:href")).get();
-//               }
-            }
-
-            finalThread.start();
+            if (!finalThread.isAlive())
+                finalThread.start();
             dist.interrupt();
-//            Platform.runLater(() -> MainViewController.getCollectViewController().getTextInfo()
-//                    .appendText("Обработка ГородРабот почти завершена, всего объявлений: " + GorRabParser.getElementCount() + "\n"));
             numberThread = 0;
 
         }
@@ -141,5 +122,36 @@ public class GorRabCategoryParser extends Thread {
 
     public List<Skills> getSkillsForCategory() {
         return skillsForCategory;
+    }
+
+    @Override
+    public void parsePage() throws InterruptedException {
+        Elements vacancyList = doc.getElementsByTag("h2");
+        for (Element e : vacancyList) {
+            Elements temp = e.getElementsByTag("a");
+            String nameVacancy = temp.text();
+            String urlVacancy = temp.attr("abs:href");
+            Vacancy tmp = new Vacancy(nameVacancy, urlVacancy);
+            exchanger.exchange(tmp);
+            GorRabParser.addElementCount();
+
+        }
+    }
+
+    @Override
+    public boolean getNextPage() throws IOException {
+        Element nextPage = null;
+        if (doc.getElementsByClass("pager-item pager-item_type_after").size() > 0)
+            nextPage = doc.getElementsByClass("pager-item pager-item_type_after").get(0);
+
+        if (nextPage == null)
+        {
+            dist.setActive(false);
+            return false;
+        }
+        else {
+            doc = Jsoup.connect(nextPage.attr("abs:href")).get();
+            return true;
+        }
     }
 }

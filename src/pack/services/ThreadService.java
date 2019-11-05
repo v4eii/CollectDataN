@@ -49,6 +49,12 @@ public class ThreadService extends Service{
         });
         return allHits;
     }
+
+    public static Set<String> collectSet(List<HashSet<String>> setList) {
+        Set<String> allSets = new HashSet<>();
+        setList.forEach(allSets::addAll);
+        return allSets;
+    }
     
     /**
      * Генерирует файл с логом всех обработанных объявлений

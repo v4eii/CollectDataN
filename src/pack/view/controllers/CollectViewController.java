@@ -37,7 +37,10 @@ public class CollectViewController implements Initializable {
 
     private static Boolean logGenerate;
     private static SimpleBooleanProperty blockElements;
-    private Service<Void> service;
+    public enum PARSING_TARGET {
+        CollectCompetency,
+        AnalysisCompetency;
+    };
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
@@ -47,7 +50,16 @@ public class CollectViewController implements Initializable {
         btnStartParsing.addEventHandler(ActionEvent.ACTION, event -> {
             logGenerate = chLogGenerate.isSelected();
             blockElements.setValue(Boolean.TRUE);
-            Parsing.run();
+            if (new Alert(Alert.AlertType.CONFIRMATION,
+                    "Произвести сбор новых компетенций?",
+                    ButtonType.YES, ButtonType.NO).showAndWait().get() == ButtonType.YES) {
+                Parsing.run(PARSING_TARGET.CollectCompetency);
+            }
+            else if (new Alert(Alert.AlertType.CONFIRMATION,
+                    "Произвести анализ компетенций?",
+                    ButtonType.YES, ButtonType.NO).showAndWait().get() == ButtonType.YES) {
+                Parsing.run(PARSING_TARGET.AnalysisCompetency);
+            }
             // TODO: Придумать что нибудь с блокировкой кнопок
             blockElements.setValue(Boolean.FALSE);
         });

@@ -1,26 +1,23 @@
 package pack.view.controllers;
 
-import javafx.collections.FXCollections;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
 import javafx.scene.Scene;
-import javafx.scene.control.*;
+import javafx.scene.control.MenuItem;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.BorderPane;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
-import org.apache.poi.hssf.usermodel.HSSFSheet;
-import org.apache.poi.xssf.usermodel.XSSFSheet;
-import pack.db.DBBean;
-import pack.db.entity.Category;
-import pack.db.entity.Skills;
 
 import java.io.IOException;
 import java.net.URL;
 import java.util.ResourceBundle;
+
+//import org.apache.poi.hssf.usermodel.HSSFSheet;
+//import org.apache.poi.xssf.usermodel.XSSFSheet;
 
 /**
  *  Created by v4e on 13.07.2019

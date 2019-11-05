@@ -6,6 +6,8 @@ import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 import pack.db.DBBean;
 import pack.db.entity.Category;
+import pack.threads.Parser;
+import pack.threads.Parsing;
 import pack.util.Config;
 
 import java.io.IOException;
@@ -17,20 +19,19 @@ import java.io.IOException;
 /**
  * Отвечает за запуск парсеров по категориям, аналог HHParser
  */
-public class GorRabParser {
+public class GorRabParser implements Parser {
 
     private static Document doc;
     private static int elementCount;
 
     public static void run() {
-
         try {
             doc = Jsoup.connect(Config.getGorRabUrl()).get();
             Elements profs = doc.getElementById("vacancy").getElementsByClass("clearfix str-crop");
             for (Element e : profs) {
                 String href = e.attr("abs:href");
                 Category category = DBBean.getInstance().getCategoryJPAController().findCategoryByName(e.text().replaceAll("[^-А-я,A-z ]", "").trim());
-                if (category != null) {
+                if (category != null && category.getName().equals("Информационные технологии, интернет, телеком")) {
                     GorRabCategoryParser tmp = new GorRabCategoryParser(href, category);
                     tmp.start();
                 }

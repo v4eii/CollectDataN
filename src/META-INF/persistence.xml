@@ -8,7 +8,7 @@
       <property name="eclipselink.jdbc.url" value="jdbc:postgresql://localhost:5432/science_collector"/>
       <property name="eclipselink.jdbc.driver" value="org.postgresql.Driver"/>
       <property name="eclipselink.jdbc.user" value="postgres"/>
-      <property name="eclipselink.jdbc.password" value="15sl02tt"/>
+      <property name="eclipselink.jdbc.password" value="88sl02tt"/>
     </properties>
   </persistence-unit>
 </persistence>

@@ -1,7 +1,7 @@
 <component name="libraryTable">
   <library name="postgresql-42.2.5">
     <CLASSES>
-      <root url="jar://F:/NetBeans/ide/modules/ext/postgresql-42.2.5.jar!/" />
+      <root url="jar://D:/NetBeans 11/NetBeans-11.1/netbeans/ide/modules/ext/postgresql-42.2.5.jar!/" />
     </CLASSES>
     <JAVADOC />
     <SOURCES />
