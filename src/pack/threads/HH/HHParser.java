@@ -1,11 +1,13 @@
 package pack.threads.HH;
 
+import javafx.scene.control.Alert;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 import pack.db.DBBean;
 import pack.db.entity.Category;
+import pack.services.ThreadService;
 import pack.threads.Parser;
 import pack.threads.Parsing;
 import pack.util.Config;
@@ -24,6 +26,10 @@ public class HHParser implements Parser {
     private static Document doc;
     private static int elementsCount;
 
+    /**
+     * Сбор всех категорий вакансий с сайта и сопоставление их с категориями из БД
+     * запуск отдельных парсеров на каждую категорию. ЭТО НЕ МЕТОД КЛАССА Thread!!
+     */
     public static void run() {
 
         try {
@@ -39,9 +45,9 @@ public class HHParser implements Parser {
             }
         }
         catch (IOException e) {
-            e.printStackTrace();
+            ThreadService.showDialog("Ошибка", "Не удалось соединиться с сайтом обработки" +
+                    "\n проверьте интернет-соединение", Alert.AlertType.ERROR);
         }
-
     }
 
     public synchronized static void addElementsCount() {

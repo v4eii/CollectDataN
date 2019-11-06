@@ -57,7 +57,7 @@ public class MainViewController implements Initializable {
                     bPane.setCenter(sPane);
                 }
                 else {
-                    bPane.setCenter(categoryViewController.getbPane());
+                    bPane.setCenter(categoryViewController.getBPane());
                 }
             }
             catch (IOException e) {
@@ -143,28 +143,3 @@ public class MainViewController implements Initializable {
         return optionViewController;
     }
 }
-
-
-
-//    TableColumn<Category, String> colName = new TableColumn<>();
-//    TableColumn<Category, Skills> colSkill = new TableColumn<>();
-//            colSkill.setCellValueFactory(param -> new ReadOnlyObjectWrapper<>(DBBean.getInstance().getSkillsJPAController().findSkills(param.getValue().getIdCategory()));
-//        colSkill.setCellFactory(TextFieldTableCell.forTableColumn(new StringConverter<Skills>() {
-//@Override
-//public String toString(Skills object) {
-//        return object == null ? "" : object.getName();
-//        }
-//
-//@Override
-//public Skills fromString(String string) {
-//        for (Skills s : DBBean.getInstance().getSkillsJPAController().findSkillsEntities()) {
-//        if (s.getName().equals(string)) {
-//        return s;
-//        }
-//        }
-//        }
-//        }));
-//        colSkill.setOnEditCommit(event1 -> {
-//
-//        });
-//        TableView<Category> tableView = new TableView<>();

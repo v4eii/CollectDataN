@@ -14,10 +14,6 @@ import java.net.URL;
 import java.util.ResourceBundle;
 
 /**
- *  Created by v4e on 13.07.2019
- */
-
-/**
  * Окно параметров, для редактирования полей класса Config
  * @author v4e
  */
@@ -57,8 +53,8 @@ public class OptionViewController implements Initializable {
         cbExcelType.getSelectionModel().select(Config.getExcelType());
         
         labelThreadCountInfo.setTooltip(new Tooltip("Количество потоков для обработки заявлений.\n" +
-                "Каждый сайт будет обработан указанным числом потоков.\n" +
-                "При медленной скорости интернета значительное увеличение числа потоков будет иметь меньший эффект"));
+                "Каждая категория на сайте будет обработана указанным числом потоков.\n" +
+                "При медленной скорости интернета увеличение числа потоков будет иметь меньший эффект"));
         labelPathLogInfo.setTooltip(new Tooltip("Расположение создания файла лога сбора данных"));
         labelSiteParsInfo.setTooltip(new Tooltip("Выбор обрабатываемых сайтов. \n" +
                 "Для более достоверного результата рекомендуется обрабатывать все доступные сайты"));
@@ -110,7 +106,10 @@ public class OptionViewController implements Initializable {
         chGorRab.setSelected(Config.getGorRabSelect());
         chHH.setSelected(Config.getHHSelect());
     }
-    
+
+    /**
+     * Обновление формы на случай изменения параметров
+     */
     void refreshData() {
         fieldExcelPath.setText(Config.getExcelPath());
         fieldLogPath.setText(Config.getLogGeneratePath());

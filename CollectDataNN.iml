@@ -5,7 +5,7 @@
       <configuration>
         <setting name="validation-enabled" value="true" />
         <datasource-mapping>
-          <factory-entry name="CollPU" value="7eaf9a16-eab4-4a04-81bb-8c5820af3aa6" />
+          <factory-entry name="CollPU" value="bbd09b02-e654-4149-aa69-83e6cf9ec8eb" />
         </datasource-mapping>
         <naming-strategy-map />
         <deploymentDescriptor name="persistence.xml" url="file://$MODULE_DIR$/src/META-INF/persistence.xml" />

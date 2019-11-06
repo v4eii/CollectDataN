@@ -55,10 +55,8 @@ public class GorRabDistribution extends Thread {
     {
         for (int i = 0; i < Config.getThreadCount(); i++)
         {
-            GorRabTreatment thread = new GorRabTreatment(exchanger, gorRabCategoryParser.getFinalThread().getExchanger(),
-                    gorRabCategoryParser.getFinalThread().getExchangerToLog(), treatmentGroup,
-                    "THREAD@Treatment GorRab#" + (GorRabCategoryParser.getNumberThread()),
-                    category, gorRabCategoryParser);
+            GorRabTreatment thread = new GorRabTreatment(exchanger, gorRabCategoryParser.getFinalThread(), treatmentGroup,
+                    "THREAD@Treatment GorRab#" + (GorRabCategoryParser.getNumberThread()), gorRabCategoryParser);
             gorRabCategoryParser.getProcessesCompletion().put("THREAD@Treatment GorRab#" + (GorRabCategoryParser.getNumberThread()), false);
             GorRabCategoryParser.addNumberThread();
             thread.start();
@@ -75,7 +73,6 @@ public class GorRabDistribution extends Thread {
             }
             catch (InterruptedException ex)
             {
-                //Logger.getLogger(GorRabDistribution.class.getName()).log(Level.SEVERE, null, ex);
                 if (!isActive())
                     break;
             }

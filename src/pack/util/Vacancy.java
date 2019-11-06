@@ -26,20 +26,9 @@ public class Vacancy implements Serializable{
         return nameVacancy;
     }
 
-    public void setNameVacancy(String nameVacancy)
-    {
-        this.nameVacancy = nameVacancy;
-    }
-
     public String getUrlVacancy()
     {
         return urlVacancy;
     }
-
-    public void setUrlVacancy(String urlVacancy)
-    {
-        this.urlVacancy = urlVacancy;
-    }
-    
     
 }

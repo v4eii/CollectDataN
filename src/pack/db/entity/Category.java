@@ -14,7 +14,7 @@ import java.util.Collection;
         {
                 @NamedQuery(name = "Category.findAll", query = "SELECT c FROM Category c"),
                 @NamedQuery(name = "Category.findByIdCategory", query = "SELECT c FROM Category c WHERE c.idCategory = :idCategory"),
-                @NamedQuery(name = "Category.findByName", query = "SELECT c FROM Category c WHERE c.name = :name")
+                @NamedQuery(name = "Category.findByName", query = "SELECT c FROM Category c WHERE c.name = :p_name")
         })
 public class Category implements Serializable {
 

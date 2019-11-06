@@ -28,17 +28,14 @@ public class FinalProcessing extends Thread {
      * Карта объединяющяя все карты потоков
      */
     private Map<String, Integer> allHits;
-    private List<String> fullLogList;
     private Set<String> allCompetency;
     private Exchanger<HashMap<String, Integer>> exchanger;
-    private Exchanger<ArrayList<String>> exchangerToLog;
     private Exchanger<HashSet<String>> exchangerToCollect;
     /**
      * Список карт потоков
      */
     private List<HashMap<String, Integer>> mapList;
     private List<HashSet<String>> setList;
-    private List<List<String>> logList;
     private Category category;
     // Общее число ключевых слов
     private int countHits = 0;
@@ -54,10 +51,6 @@ public class FinalProcessing extends Thread {
         this.category = category;
         mapList = new ArrayList<>();
         setList = new ArrayList<>();
-        if (CollectViewController.getLogGenerate()) {
-            exchangerToLog = new Exchanger<>();
-            logList = new ArrayList<>();
-        }
     }
     
     @Override
@@ -69,7 +62,7 @@ public class FinalProcessing extends Thread {
         }
         catch (InterruptedException ex)
         {
-            Logger.getLogger(FinalProcessing.class.getName()).log(Level.SEVERE, null, ex);
+            ex.printStackTrace();
         }
 
         // Сбор карт из потоков.
@@ -82,32 +75,18 @@ public class FinalProcessing extends Thread {
                     mapList.add(exchanger.exchange(x));
                 }
                 catch (InterruptedException ex) {
-                    Logger.getLogger(FinalProcessing.class.getName()).log(Level.SEVERE, null, ex);
+                    ex.printStackTrace();
                 }
             }
             //Сбор листов для лога
-            if (CollectViewController.getLogGenerate()) {
-                for (int i = 0; i < threadCount; i++) {
-                    try {
-                        ArrayList<String> x = null;
-                        logList.add(exchangerToLog.exchange(x));
-                    }
-                    catch (InterruptedException e) {
-                        e.printStackTrace();
-                    }
-                }
-            }
-
             allHits = ThreadService.collectMap(mapList);
-            if (CollectViewController.getLogGenerate())
-                ThreadService.generateLog(logList);
             allHits.values().forEach((Integer t) ->
                     countHits += t);
             allHits.forEach((String str, Integer i) ->
             {
                 double tmp = i.doubleValue() / countHits * 100;
                 System.out.println(str + " " + tmp + "%");
-                MainViewController.getCollectViewController().getTextInfo().appendText(str + " " + new DecimalFormat("#.##").format(tmp) + "%" + "\n");
+//                MainViewController.getCollectViewController().getTextInfo().appendText(str + " " + new DecimalFormat("#.##").format(tmp) + "%" + "\n");
             });
         }
         else {
@@ -128,7 +107,8 @@ public class FinalProcessing extends Thread {
 //                stage.showAndWait();
 //            });
             System.out.println(allCompetency.size());
-            allCompetency.forEach(System.out::println);
+            Collection<String> strings = ThreadService.recombineCompetency(allCompetency);
+            strings.forEach(System.out::println);
         }
 
         System.out.println(getName() + " Stopped");
@@ -141,10 +121,6 @@ public class FinalProcessing extends Thread {
     public Exchanger<HashMap<String, Integer>> getExchanger()
     {
         return exchanger;
-    }
-    
-    public Exchanger<ArrayList<String>> getExchangerToLog() {
-        return exchangerToLog;
     }
 
     public Category getCategory() {

@@ -1,9 +1,12 @@
 package pack.threads.gorrab;
 
+import javafx.application.Platform;
+import javafx.scene.control.Alert;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import pack.db.entity.Category;
 import pack.services.ThreadService;
+import pack.threads.FinalProcessing;
 import pack.threads.Parsing;
 import pack.threads.TreatmentParser;
 import pack.util.Vacancy;
@@ -12,6 +15,7 @@ import pack.view.controllers.CollectViewController;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.concurrent.Exchanger;
 
 /**
@@ -23,46 +27,38 @@ public class GorRabTreatment extends Thread implements TreatmentParser {
 
     private Exchanger<Vacancy> exchanger;
     private Exchanger<HashMap<String, Integer>> exchangerToAnalysis;
-    private Exchanger<ArrayList<String>> exchangerToLog;
-
+    private Exchanger<HashSet<String>> exchangerToCollect;
     private Vacancy vacancy;
     private volatile String name;
     // Статус потока
     private boolean active;
     // Попадания ключевых слов
     private HashMap<String, Integer> hits;
+    private HashSet<String> competencyData;
     private Document doc;
-    // Для генерации лога
     private ArrayList<String> logData;
-    private Category category;
     private GorRabCategoryParser gorRabCategoryParser;
 
     /**
-     * Инициализация объектов
-     *
-     * @param exchanger            объект обмена с распределяющим потоком
-     * @param exchangerToAnalysis  объект для обмена с финальным потоком
-     * @param exchangerToLog       объект обмена для генерации лога
-     * @param group                группа принадлежности распределяющего потока
-     * @param name                 имя потока
-     * @param category             категория обработки
+     * @param exchanger объект обмена с распределяющим потоком
+     * @param finalProcessing объект потока для сбора всех данных
+     * @param group группа принадлежности распределяющего потока
+     * @param threadName имя потока
      * @param gorRabCategoryParser парсер категории
      */
-    GorRabTreatment(Exchanger<Vacancy> exchanger, Exchanger<HashMap<String, Integer>> exchangerToAnalysis,
-                    Exchanger<ArrayList<String>> exchangerToLog, ThreadGroup group, String name, Category category,
-                    GorRabCategoryParser gorRabCategoryParser) {
-        super(group, name);
+    GorRabTreatment(Exchanger<Vacancy> exchanger, FinalProcessing finalProcessing,
+                    ThreadGroup group, String threadName, GorRabCategoryParser gorRabCategoryParser) {
+        super(group, threadName);
         this.gorRabCategoryParser = gorRabCategoryParser;
+        this.exchangerToCollect = finalProcessing.getExchangerToCollect();
         this.exchanger = exchanger;
-        this.name = name;
-        this.category = category;
+        this.name = threadName;
         active = true;
         hits = new HashMap<>();
-        this.exchangerToAnalysis = exchangerToAnalysis;
-        if (CollectViewController.getLogGenerate()) {
+        competencyData = new HashSet<>();
+        this.exchangerToAnalysis = finalProcessing.getExchanger();
+        if (CollectViewController.getLogGenerate())
             logData = new ArrayList<>();
-            this.exchangerToLog = exchangerToLog;
-        }
     }
 
     @Override
@@ -71,12 +67,26 @@ public class GorRabTreatment extends Thread implements TreatmentParser {
             try {
                 if (Parsing.getParsingTarget().equals(CollectViewController.PARSING_TARGET.AnalysisCompetency))
                     analysisTreatment();
-                else if (Parsing.getParsingTarget().equals(CollectViewController.PARSING_TARGET.CollectCompetency))
-                    collectTreatment();
+                else if (Parsing.getParsingTarget().equals(CollectViewController.PARSING_TARGET.CollectCompetency)) {
+//                    collectTreatment();
+                }
             }
             catch (InterruptedException | IOException ex) {
                 if (!isActive())
                     break;
+            }
+        }
+
+        if (CollectViewController.getLogGenerate()) {
+            try {
+                logData.sort(String::compareTo);
+                ThreadService.writeInLog(logData);
+            }
+            catch (IOException e) {
+                Platform.runLater(() -> {
+                    ThreadService.showDialog("Ошибка", "Ошибка записи лога, проверьте указанный путь",
+                            Alert.AlertType.ERROR);
+                });
             }
         }
 
@@ -120,27 +130,37 @@ public class GorRabTreatment extends Thread implements TreatmentParser {
 
     @Override
     public void transferData() throws InterruptedException {
-        HashMap<String, Integer> tmp = null;
-        ArrayList<String> tmpList = null;
-        boolean stop = false;
-        boolean mapSend = false, listSend = false;
-        do {
-            if (!mapSend)
-                tmp = exchangerToAnalysis.exchange(hits);
-            if (!listSend && CollectViewController.getLogGenerate())
-                tmpList = exchangerToLog.exchange(logData);
+        if (Parsing.getParsingTarget().equals(CollectViewController.PARSING_TARGET.AnalysisCompetency)) {
+            HashMap<String, Integer> tmp = null;
+            ArrayList<String> tmpList = null;
+            boolean stop = false;
+            boolean mapSend = false;
+            do {
+                if (!mapSend)
+                    tmp = exchangerToAnalysis.exchange(hits);
+                if (tmp == null && !mapSend) {
+                    mapSend = true;
+                    System.out.println(name + " отправил карту");
+                }
 
-            if (tmp == null && !mapSend) {
-                mapSend = true;
-                System.out.println(name + " отправил карту");
-            }
-            if (tmpList == null && !listSend && CollectViewController.getLogGenerate()) {
-                listSend = true;
-                System.out.println(name + " отправил list");
-            }
-
-            if (tmp == null && tmpList == null)
-                stop = true;
-        } while (!stop);
+                if (tmp == null && tmpList == null)
+                    stop = true;
+            } while (!stop);
+        }
+        else {
+            HashSet<String> tmpSet = new HashSet<>();
+            boolean stop = false;
+            boolean setSend = false;
+            do {
+                if (!setSend)
+                    tmpSet = exchangerToCollect.exchange(competencyData);
+                if (tmpSet == null && !setSend) {
+                    setSend = true;
+                    System.out.println(name + " отправил сет");
+                }
+                if (tmpSet == null)
+                    stop = true;
+            } while (!stop);
+        }
     }
 }

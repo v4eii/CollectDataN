@@ -1,6 +1,7 @@
 package pack.threads.gorrab;
 
 import javafx.application.Platform;
+import javafx.scene.control.Alert;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
@@ -8,6 +9,7 @@ import org.jsoup.select.Elements;
 import pack.db.DBBean;
 import pack.db.entity.Category;
 import pack.db.entity.Skills;
+import pack.services.ThreadService;
 import pack.threads.CategoryParser;
 import pack.threads.FinalProcessing;
 import pack.threads.Parsing;
@@ -49,7 +51,7 @@ public class GorRabCategoryParser extends Thread implements CategoryParser {
     public GorRabCategoryParser(String URL, Category category) {
         setPriority(9);
         exchanger = new Exchanger<>();
-        skillsForCategory = DBBean.getInstance().getSkillsJPAController().findSkillsEntities().stream().filter(skills -> skills.getIdCategory().equals(category)).collect(Collectors.toList());
+        skillsForCategory = (List<Skills>) category.getSkillsCollection();
         Parsing.getFinalProcessingList().forEach(finalProcessing -> {
             if (finalProcessing.getCategory().equals(category))
                 finalThread = finalProcessing;
@@ -83,13 +85,8 @@ public class GorRabCategoryParser extends Thread implements CategoryParser {
         }
         //TODO: Проблема "Connection timed out: connect". Огромная нагрузка на сеть? Не хватает скорости? (при обработке HH + GR). Попытка реконекта не сильно помогает
         catch (ConnectException ex) {
-            try {
-                Thread.sleep(5000);
-                doc = Jsoup.connect(doc.getElementsByClass("pager-item pager-item_type_after").get(0).attr("abs:href")).get();
-            }
-            catch (IOException | InterruptedException e) {
-                e.printStackTrace();
-            }
+            ThreadService.showDialog("Ошибка подключения",
+                    "Произошла ошибка подключения, проверьте ваше интернет соединение", Alert.AlertType.WARNING);
         }
         catch (IOException | InterruptedException ex) {
             ex.printStackTrace();

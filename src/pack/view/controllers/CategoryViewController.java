@@ -17,7 +17,6 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
 import java.util.ResourceBundle;
-import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
 /**
@@ -61,15 +60,17 @@ public class CategoryViewController implements Initializable {
                 });
             }
             else {
-                Service.showWarningDialog("Не выбрано категорий", "Выберите одну из категорий");
+                Service.showDialog("Не выбрано категорий", "Выберите одну из категорий", Alert.AlertType.WARNING);
             }
         });
 
         btnDeleteSkill.setOnAction(event -> {
             if (skillsListView.getSelectionModel().getSelectedItem() != null) {
                 try {
-                    if (Service.showConfirmDialog("Удаление компетенций", "Подтверждение", "Вы уверены что хотите удалить компетенцию?").get() == ButtonType.OK) {
-                        DBBean.getInstance().getSkillsJPAController().destroy(skillsListView.getSelectionModel().getSelectedItem().getIdSkill());
+                    if (Service.showConfirmDialog("Удаление компетенций", "Подтверждение",
+                            "Вы уверены что хотите удалить компетенцию?").get() == ButtonType.OK) {
+                        DBBean.getInstance().getSkillsJPAController()
+                                .destroy(skillsListView.getSelectionModel().getSelectedItem().getIdSkill());
                         skillsList.remove(skillsListView.getSelectionModel().getSelectedItem());
                         skillsListView.refresh();
                     }
@@ -79,7 +80,8 @@ public class CategoryViewController implements Initializable {
                 }
             }
             else {
-                Service.showWarningDialog("Не выбрано компетенций", "Выберите одну из компетенций");
+                Service.showDialog("Не выбрано компетенций", "Выберите одну из компетенций",
+                        Alert.AlertType.WARNING);
             }
         });
 
@@ -96,12 +98,8 @@ public class CategoryViewController implements Initializable {
             }
         });
 
-        categoryList.sort((o1, o2) -> {
-            if (o1.getIdCategory() > o2.getIdCategory())
-                return 1;
-            else
-                return -1;
-        });
+        categoryList.sort(Comparator.comparing(Category::getIdCategory));
+
         categoryListView.setItems((ObservableList<Category>) categoryList);
         categoryListView.setCellFactory(param -> new ListCell<Category>() {
             @Override
@@ -124,7 +122,7 @@ public class CategoryViewController implements Initializable {
         });
     }
 
-    public BorderPane getbPane() {
+    public BorderPane getBPane() {
         return bPane;
     }
 }

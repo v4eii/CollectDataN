@@ -56,10 +56,8 @@ public class HHDistribution extends Thread {
     {
         for (int i = 0; i < Config.getThreadCount(); i++)
         {
-            HHTreatment thread = new HHTreatment(exchanger, hhCategoryParser.getFinalProcessing().getExchanger(),
-                    hhCategoryParser.getFinalProcessing().getExchangerToLog(), treatmentGroup,
-                    "THREAD@Treatment HH#" + (HHCategoryParser.getNumberThread()),
-                    category, hhCategoryParser, hhCategoryParser.getFinalProcessing().getExchangerToCollect());
+            HHTreatment thread = new HHTreatment(exchanger, hhCategoryParser.getFinalProcessing(), treatmentGroup,
+                    "THREAD@Treatment HH#" + (HHCategoryParser.getNumberThread()), hhCategoryParser);
             hhCategoryParser.getProcessesCompletion().put("THREAD@Treatment HH#" + (HHCategoryParser.getNumberThread()), false);
             HHCategoryParser.addNumberThread();
             thread.start();
